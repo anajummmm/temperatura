@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitor IoT - Temperatura e Umidade</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="card">
+    <h1>📡 Sensor DHT11</h1>
+    <div class="info" id="temperatura">Temperatura: -- °C</div>
+    <div class="info" id="umidade">Umidade: -- %</div>
+    <div class="atualizando" id="atualizando">Atualizando...</div>
+  </div>
+
+  <script>
+    const IP_ESP32 = "http://10.87.148.22/dados";
+
+    async function buscarDados() {
+      try {
+        const resposta = await fetch(IP_ESP32);
+        const dados = await resposta.json();
+
+        document.getElementById("temperatura").textContent = `Temperatura: ${dados.temperatura} °C`;
+        document.getElementById("umidade").textContent = `Umidade: ${dados.umidade} %`;
+        document.getElementById("atualizando").textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
+      } catch (erro) {
+        console.error("Erro ao buscar dados do ESP32:", erro);
+        document.getElementById("temperatura").textContent = "Temperatura: -- °C";
+        document.getElementById("umidade").textContent = "Umidade: -- %";
+        document.getElementById("atualizando").textContent = "Erro na atualização";
+      }
+    }
+
+    buscarDados();
+    setInterval(buscarDados, 30000);
+  </script>
+</body>
+</html>
